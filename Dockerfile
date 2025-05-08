@@ -13,7 +13,7 @@ ENV LANG=en_US.UTF-8 \
     VIRTUAL_ENV=/usr/src/venv \
     POETRY_VERSION=2.1.2
 
-# Копируем только файлы зависимостей
+
 COPY pyproject.toml poetry.lock ./
 
 
@@ -22,7 +22,11 @@ RUN python -m venv /usr/src/venv && \
     pip install "poetry==$POETRY_VERSION" && \
     poetry install --no-root --no-interaction --without=dev
 
-# Копируем весь проект
 COPY . .
 
-CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+CMD ["/app/entrypoint.sh"]
+
+# CMD ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]
